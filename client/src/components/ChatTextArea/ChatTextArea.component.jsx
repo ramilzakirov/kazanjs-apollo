@@ -14,7 +14,7 @@ const ChatTextArea = ({
   <div className={classes['chat-textarea']}>
     <textarea
       className={classes['chat-textarea-input']}
-      defaultValue={text}
+      value={text}
       placeholder="Введите текст сообщения"
       onChange={({ target: { value } }) => setText(value)}
       onKeyPress={(event) => {
@@ -59,11 +59,11 @@ const createMessageMutation = gql`
 export default compose(
   withStyles(styles),
   withState('text', 'setText', ''),
-  graphql(createMessageMutation),
+  graphql(createMessageMutation, { name: 'createMessage' }),
   withHandlers({
-    sendMessage: ({ setText, chatRoomId, mutate }) => {
+    sendMessage: ({ setText, chatRoomId, createMessage }) => {
       return text => {
-        mutate({
+        createMessage({
           variables: {
             text,
             chatRoomId,
