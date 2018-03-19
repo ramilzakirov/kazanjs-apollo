@@ -1,8 +1,9 @@
 import React from 'react';
-import { compose, pure, mapProps, withState, lifecycle } from 'recompose';
+import { compose, pure, withProps, lifecycle } from 'recompose';
 import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
 import { withStyles } from 'material-ui/styles';
+import update from 'immutability-helper';
 import Message from './Message.component';
 
 const ChatMessages = ({
@@ -48,6 +49,10 @@ const messageCreatedSubscription = gql`
     messageCreated(chatroomId: $chatRoomId){
       id
       text
+      user {
+        id
+        fullName
+      }
     }
   }
 `;
@@ -64,53 +69,40 @@ export default compose(
       };
     },
   }),
-  mapProps(({ chatRoomQuery, chatRoomId, ...rest }) => {
-    const messages = chatRoomQuery && chatRoomQuery.chatroom && chatRoomQuery.chatroom.messages;
-
-    return {
-      ...rest,
-      messages,
-      subscribeToMessages: () => {
-        return chatRoomQuery.subscribeToMore({
-          document: messageCreatedSubscription,
-          variables: {
-            chatRoomId,
-          },
-          updateQuery: (
-            previousResult,
-            { subscriptionData }
-          ) => {
-            if (!subscriptionData.data) {
-              return previousResult;
-            }
-
-            const newMessage = subscriptionData.data.messageCreated;
-
-            return Object.assign({}, previousResult, {
-              chatroom: {
-                messages: {
-                  $push: [newMessage],
-                },
-              },
-            });
-          },
-          onError: (err) => console.error(err),
-        });
-      },
-    };
-  }),
-  withState('subscription', 'setSubscription', null),
   lifecycle({
     componentWillMount() {
-      const { subscribeToMessages, setSubscription } = this.props;
-      const subscription = subscribeToMessages();
-      setSubscription(subscription);
+      const { chatRoomQuery, chatRoomId } = this.props;
+
+      chatRoomQuery.subscribeToMore({
+        document: messageCreatedSubscription,
+        variables: {
+          chatRoomId,
+        },
+        updateQuery: (
+          previousResult,
+          { subscriptionData }
+        ) => {
+          if (!subscriptionData.data) {
+            return previousResult;
+          }
+
+          const newMessage = subscriptionData.data.messageCreated;
+
+          return update(previousResult, {
+            chatroom: {
+              messages: {
+                $push: [newMessage],
+              },
+            },
+          });
+        },
+        onError: (err) => console.error(err),
+      });
     },
-    componentWillUnmount() {
-      const { subscription, setSubscription } = this.props;
-      subscription.unsubscribe();
-      setSubscription(null);
-    }
+  }),
+  withProps(({ chatRoomQuery, chatRoomId, ...rest }) => {
+    const messages = chatRoomQuery && chatRoomQuery.chatroom && chatRoomQuery.chatroom.messages;
+    return { messages };
   }),
   pure,
 )(ChatMessages);
