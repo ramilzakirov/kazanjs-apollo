@@ -1,0 +1,40 @@
+{
+  "name": "client",
+  "version": "0.1.0",
+  "private": true,
+  "proxy": {
+    "/graphql": {
+      "target": "http://localhost:8080/graphql"
+    },
+    "/graphiql": {
+      "target": "http://localhost:8080/graphiql"
+    },
+    "/subscriptions": {
+      "target": "ws://localhost:8080/subscriptions",
+      "ws": true
+    }
+  },
+  "dependencies": {
+    "apollo-cache-inmemory": "^1.1.11",
+    "apollo-client": "^2.0.0-rc.7",
+    "apollo-link": "^1.2.1",
+    "apollo-link-http": "^1.5.3",
+    "apollo-link-ws": "^1.0.7",
+    "graphql": "^0.13.2",
+    "graphql-tag": "^2.8.0",
+    "material-ui": "^1.0.0-beta.36",
+    "material-ui-icons": "^1.0.0-beta.36",
+    "react": "^16.2.0",
+    "react-apollo": "^2.0.4",
+    "react-dom": "^16.2.0",
+    "react-scripts": "1.1.1",
+    "recompose": "^0.26.0",
+    "subscriptions-transport-ws": "^0.9.6"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  }
+}
