@@ -30,7 +30,7 @@ const styles = (theme) => ({
 });
 
 const chatRoomQuery = gql`
-  query ($chatRoomId: Int!) {
+  query chatRoomQuery($chatRoomId: Int!) {
     chatroom(id: $chatRoomId) {
       messages {
         id
@@ -45,7 +45,7 @@ const chatRoomQuery = gql`
 `;
 
 const messageCreatedSubscription = gql`
-  subscription ($chatRoomId: Int!){
+  subscription messageCreatedSubscription($chatRoomId: Int!){
     messageCreated(chatroomId: $chatRoomId){
       id
       text
@@ -70,10 +70,23 @@ export default compose(
     },
   }),
   lifecycle({
-    componentWillMount() {
-      const { chatRoomQuery, chatRoomId } = this.props;
+    componentWillReceiveProps(nextProps) {
+      const { chatRoomId } = nextProps;
 
-      chatRoomQuery.subscribeToMore({
+      if (this.unsubscribe) {
+        if (this.props.chatRoomId !== nextProps.chatRoomId) {
+          this.unsubscribe();
+          this.unsubscribe = null;
+        } else {
+          return;
+        }
+      }
+
+      if (nextProps.chatRoomQuery.loading) {
+        return;
+      }
+
+      this.unsubscribe = nextProps.chatRoomQuery.subscribeToMore({
         document: messageCreatedSubscription,
         variables: {
           chatRoomId,
