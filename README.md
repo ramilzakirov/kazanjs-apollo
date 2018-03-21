@@ -22,5 +22,5 @@ terminal 1 для запуска сервера
 
 terminal 2 для запуска веб приложения
 ```
-> npm start
+> cd client && npm start
 ```
