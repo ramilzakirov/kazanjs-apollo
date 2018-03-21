@@ -1,6 +1,6 @@
 import db from '../../../db';
 
-const chatrooms = (obj, { id }, context) => {
+const chatrooms = (parent, { id }, context) => {
 	return id
 		? db.chatrooms.find(x => x.id === id)
 		: db.chatrooms;

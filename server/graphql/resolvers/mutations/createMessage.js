@@ -2,7 +2,7 @@ import pubSub from '../../pubSub';
 import db from '../../../db';
 import { last } from 'lodash';
 
-const createMessage = (obj, { text, userId, chatroomId }, context) => {
+const createMessage = (parent, { text, userId, chatroomId }, context) => {
   const newId = last(db.messages).id + 1;
   const newMessage = {
     id: newId,

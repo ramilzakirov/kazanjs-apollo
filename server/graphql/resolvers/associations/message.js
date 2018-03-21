@@ -1,8 +1,8 @@
 import db from '../../../db';
 
 const MessageAssociations = {
-	user(obj) {
-		return db.users.find(x => x.id === obj.userId);
+	user(message) {
+		return db.users.find(x => x.id === message.userId);
 	}
 }
 
