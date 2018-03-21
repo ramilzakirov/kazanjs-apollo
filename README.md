@@ -1,7 +1,9 @@
 # kazanjs-apollo
 
 Демо-приложение примера реализации realtime на graphql
+
 Видеозапись https://vk.com/video-89349504_456239210?t=38m46s
+
 Презентация https://github.com/ramilzakirov/kazanjs-apollo/blob/master/Apollo-Graphql-realtime.pptx
 
 **Запуск приложения**
